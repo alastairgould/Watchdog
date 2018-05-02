@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extras.Quartz;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Quartz;
 using Watchdog.Queries;
 
 namespace Watchdog
@@ -33,22 +35,38 @@ namespace Watchdog
         /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
+            var container = ConfigureServices();
+            var scheduler = container.Resolve<IScheduler>();
 
-            var healthCheckEndpointQuery = new FindHealthcheckEndpointQuery();
-            var healthCheckEndpoints = await healthCheckEndpointQuery.Execute();
+            await ConfigureJob(cancellationToken, scheduler);
 
-            Parallel.ForEach(healthCheckEndpoints, (healthcheckEndpoint) => new Healthcheck(healthcheckEndpoint).PerformHealthcheck());
+            scheduler.Start(cancellationToken).Wait(cancellationToken);
+        }
 
-            long iterations = 0;
+        private static async Task ConfigureJob(CancellationToken cancellationToken, IScheduler scheduler)
+        {
+            var job = JobBuilder.Create<HealthcheckScheduledJob>().Build();
 
-            while (true)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
+            var trigger = TriggerBuilder.Create()
+                .StartNow()
+                .WithSchedule(SimpleScheduleBuilder.RepeatSecondlyForever(10)).Build();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
+            await scheduler.ScheduleJob(job, trigger, cancellationToken);
+        }
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-            }
+        private static IContainer ConfigureServices()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterModule(new QuartzAutofacFactoryModule());
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(HealthcheckScheduledJob).Assembly));
+
+            builder.RegisterType<FindHealthcheckEndpointsQuery>().As<IFindHealthcheckEndpointsQuery>();
+            builder.RegisterType<Healthcheck>();
+            builder.RegisterType<ReportHealth>();
+
+            var container = builder.Build();
+            return container;
         }
     }
 }

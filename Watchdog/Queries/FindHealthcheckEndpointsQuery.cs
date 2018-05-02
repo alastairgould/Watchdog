@@ -8,11 +8,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Watchdog.Queries
 {
-    public class FindHealthcheckEndpointQuery 
+    public class FindHealthcheckEndpointsQuery : IFindHealthcheckEndpointsQuery
     {
         private readonly FabricClient _fabricClient;
 
-        public FindHealthcheckEndpointQuery()
+        public FindHealthcheckEndpointsQuery()
         {
             _fabricClient = new FabricClient();
         }
@@ -59,7 +59,7 @@ namespace Watchdog.Queries
                     var serviceType = (await _fabricClient.QueryManager.GetServiceTypeListAsync(app.ApplicationTypeName, app.ApplicationTypeVersion, appService.ServiceTypeName))
                         .Single();
 
-                    if(!serviceType.ServiceTypeDescription.Extensions.ContainsKey("HealthCheckUrl"))
+                    if(serviceType.ServiceTypeDescription.Extensions.ContainsKey("Watchdog"))
                     {
                         services.Add(new System.Tuple<Service, ServiceType>(appService, serviceType));
                     }

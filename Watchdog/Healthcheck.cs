@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using Watchdog.Queries;
 
 namespace Watchdog
@@ -8,15 +10,25 @@ namespace Watchdog
         private readonly Uri _healthcheckUri;
         private readonly ReportHealth _reportHealth;
 
-        public Healthcheck(HealthcheckEndpoint healthcheckEndpoint)
+        public Healthcheck(HealthcheckEndpoint healthcheckEndpoint, Func<InstanceIdentifier, ReportHealth> createReportHealth)
         {
             _healthcheckUri = healthcheckEndpoint.HealthcheckUri;
-            _reportHealth = new ReportHealth(healthcheckEndpoint.InstanceIdentifier);
+            _reportHealth = createReportHealth(healthcheckEndpoint.InstanceIdentifier);
         }
 
         public void PerformHealthcheck()
         {
-            _reportHealth.Report();
+            var httpClient = new HttpClient();
+            var result = httpClient.GetAsync(_healthcheckUri).GetAwaiter().GetResult();
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                _reportHealth.ReportHealthy();
+            }
+            else
+            {
+                _reportHealth.ReportError();
+            }
         }
     }
 }
