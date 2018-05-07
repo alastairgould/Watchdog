@@ -4,7 +4,7 @@ using Watchdog.Queries;
 
 namespace Watchdog
 {
-    public class ReportHealth 
+    public class ReportHealth : IReportHealth
     {
         private readonly InstanceIdentifier _instanceIdentifier;
 

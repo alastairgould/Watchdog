@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Threading;
 using System.Fabric.Query;
+using System.IO;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Newtonsoft.Json.Linq;
 
 namespace Watchdog.Queries
@@ -19,7 +20,6 @@ namespace Watchdog.Queries
 
         public async Task<IEnumerable<HealthcheckEndpoint>> Execute()
         {
-            var cancelationSource = new CancellationTokenSource();
             var healthcheckEndpoints = new List<HealthcheckEndpoint>();
             var services = await HealthCheckServices();
 
@@ -27,15 +27,24 @@ namespace Watchdog.Queries
             {
                 var partition = (await _fabricClient.QueryManager.GetPartitionListAsync(service.Item1.ServiceName)).Single();
                 var replicas = await _fabricClient.QueryManager.GetReplicaListAsync(partition.PartitionInformation.Id);
+                var healthCheckConfiguration = ParseHealthCheckConfiguration(service.Item2);
 
-                foreach(var replica in replicas)
+                foreach (var replica in replicas)
                 {
                     string instanceEndpoint = EndpointAddress(replica);
-                    healthcheckEndpoints.Add(new HealthcheckEndpoint(new System.Uri(instanceEndpoint + "/healthcheck"), new InstanceIdentifier(partition.PartitionInformation.Id, replica.Id)));
+                    healthcheckEndpoints.Add(new HealthcheckEndpoint(new System.Uri($"{instanceEndpoint}{healthCheckConfiguration.Healthcheck}"), new InstanceIdentifier(partition.PartitionInformation.Id, replica.Id)));
                 }
             }
          
             return healthcheckEndpoints;
+        }
+
+        private static HealthcheckConfiguration ParseHealthCheckConfiguration(ServiceType service)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(HealthcheckConfiguration));
+            var stringReader = new StringReader(service.ServiceTypeDescription.Extensions["Watchdog"]);
+            var healthCheckConfiguration = (HealthcheckConfiguration) serializer.Deserialize(stringReader);
+            return healthCheckConfiguration;
         }
 
         private static string EndpointAddress(Replica replica)

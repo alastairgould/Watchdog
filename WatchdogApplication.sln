@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "WatchdogApplication", "WatchdogApplication\WatchdogApplication.sfproj", "{E69608E1-5580-4FDB-A286-8900FC0E5EA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchdog", "Watchdog\Watchdog.csproj", "{3591E9D1-F0A8-4423-8ADB-CC874D777E24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchdog", "Watchdog\Watchdog.csproj", "{3591E9D1-F0A8-4423-8ADB-CC874D777E24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchdog.Tests", "Watchdog.Tests\Watchdog.Tests.csproj", "{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{3591E9D1-F0A8-4423-8ADB-CC874D777E24}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3591E9D1-F0A8-4423-8ADB-CC874D777E24}.Release|x64.ActiveCfg = Release|Any CPU
 		{3591E9D1-F0A8-4423-8ADB-CC874D777E24}.Release|x64.Build.0 = Release|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Debug|x64.Build.0 = Debug|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Release|x64.ActiveCfg = Release|Any CPU
+		{9C04FFCC-E0DD-4864-BB9C-9A78CFF0E8E5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
