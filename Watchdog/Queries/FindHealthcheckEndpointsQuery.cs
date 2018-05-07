@@ -31,27 +31,12 @@ namespace Watchdog.Queries
 
                 foreach (var replica in replicas)
                 {
-                    string instanceEndpoint = EndpointAddress(replica);
+                    var instanceEndpoint = EndpointAddress(replica);
                     healthcheckEndpoints.Add(new HealthcheckEndpoint(new System.Uri($"{instanceEndpoint}{healthCheckConfiguration.Healthcheck}"), new InstanceIdentifier(partition.PartitionInformation.Id, replica.Id)));
                 }
             }
          
             return healthcheckEndpoints;
-        }
-
-        private static HealthcheckConfiguration ParseHealthCheckConfiguration(ServiceType service)
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(HealthcheckConfiguration));
-            var stringReader = new StringReader(service.ServiceTypeDescription.Extensions["Watchdog"]);
-            var healthCheckConfiguration = (HealthcheckConfiguration) serializer.Deserialize(stringReader);
-            return healthCheckConfiguration;
-        }
-
-        private static string EndpointAddress(Replica replica)
-        {
-            JObject endpointObject = JObject.Parse(replica.ReplicaAddress);
-            var instanceEndpoint = endpointObject["Endpoints"].First.First.ToString();
-            return instanceEndpoint;
         }
 
         private async Task<IEnumerable<System.Tuple<Service, ServiceType>>> HealthCheckServices()
@@ -76,6 +61,21 @@ namespace Watchdog.Queries
             }
 
             return services;
+        }
+
+        private static HealthcheckConfiguration ParseHealthCheckConfiguration(ServiceType service)
+        {
+            var serializer = new XmlSerializer(typeof(HealthcheckConfiguration));
+            var stringReader = new StringReader(service.ServiceTypeDescription.Extensions["Watchdog"]);
+            var healthCheckConfiguration = (HealthcheckConfiguration) serializer.Deserialize(stringReader);
+            return healthCheckConfiguration;
+        }
+
+        private static string EndpointAddress(Replica replica)
+        {
+            var endpointObject = JObject.Parse(replica.ReplicaAddress);
+            var instanceEndpoint = endpointObject["Endpoints"].First.First.ToString();
+            return instanceEndpoint;
         }
     }
 }
