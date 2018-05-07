@@ -1,4 +1,5 @@
-﻿using System.Fabric;
+﻿using System;
+using System.Fabric;
 using System.Fabric.Health;
 using Watchdog.Queries;
 
@@ -6,23 +7,34 @@ namespace Watchdog
 {
     public class ReportHealth : IReportHealth
     {
-        private readonly InstanceIdentifier _instanceIdentifier;
+        private readonly FabricClient _fabricClient;
 
-        public ReportHealth(InstanceIdentifier instanceIdentifier)
+        public ReportHealth()
         {
-            _instanceIdentifier = instanceIdentifier;
+            _fabricClient = new FabricClient();
         }
 
-        public void ReportHealthy()
+        public void ReportHealthy(InstanceIdentifier instanceIdentifier)
         {
-            var fabricClient = new FabricClient();
-            fabricClient.HealthManager.ReportHealth(new StatelessServiceInstanceHealthReport(_instanceIdentifier.PartitionId, _instanceIdentifier.InstanceId, new HealthInformation("Watchdog", "Healthcheck", HealthState.Ok)));
+            SendHealthReport(instanceIdentifier, HealthState.Ok);
         }
 
-        public void ReportError()
+        public void ReportError(InstanceIdentifier instanceIdentifier)
         {
-            var fabricClient = new FabricClient();
-            fabricClient.HealthManager.ReportHealth(new StatelessServiceInstanceHealthReport(_instanceIdentifier.PartitionId, _instanceIdentifier.InstanceId, new HealthInformation("Watchdog", "Healthcheck", HealthState.Error)));
+            SendHealthReport(instanceIdentifier, HealthState.Error);
+        }
+
+        private void SendHealthReport(InstanceIdentifier instanceIdentifier, HealthState state)
+        {
+            var healthInformation = new HealthInformation("Watchdog", "Healthcheck", state)
+            {
+                TimeToLive = TimeSpan.FromSeconds(30)
+            };
+
+            var healthReport = new StatelessServiceInstanceHealthReport(instanceIdentifier.PartitionId,
+                instanceIdentifier.InstanceId, healthInformation);
+
+            _fabricClient.HealthManager.ReportHealth(healthReport);
         }
     }
 }

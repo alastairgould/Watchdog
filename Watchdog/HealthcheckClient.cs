@@ -6,18 +6,16 @@ namespace Watchdog
 {
     public class HealthcheckClient : IHealthcheckClient
     {
-        private readonly Uri _healthcheckUri;
         private readonly HttpClient _httpClient;
 
-        public HealthcheckClient(Uri healthcheckUri)
+        public HealthcheckClient()
         {
-            _healthcheckUri = healthcheckUri;
             _httpClient = new HttpClient();
         }
 
-        public async Task<HttpResponseMessage> GetHealthcheckAsync()
+        public async Task<HttpResponseMessage> GetHealthcheck(Uri healthcheckUri)
         {
-            return await _httpClient.GetAsync(_healthcheckUri);
+            return await _httpClient.GetAsync(healthcheckUri);
         }
     }
 }

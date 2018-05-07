@@ -1,10 +1,11 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Watchdog
 {
     public interface IHealthcheckClient
     {
-        Task<HttpResponseMessage> GetHealthcheckAsync();
+        Task<HttpResponseMessage> GetHealthcheck(Uri healthcheck);
     }
 }
