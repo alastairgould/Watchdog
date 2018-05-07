@@ -35,7 +35,7 @@ namespace Watchdog
         /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-            var container = ConfigureServices();
+            var container = ConfigureContainer();
             var scheduler = container.Resolve<IScheduler>();
 
             await ConfigureJob(cancellationToken, scheduler);
@@ -54,7 +54,7 @@ namespace Watchdog
             await scheduler.ScheduleJob(job, trigger, cancellationToken);
         }
 
-        private static IContainer ConfigureServices()
+        private static IContainer ConfigureContainer()
         {
             var builder = new ContainerBuilder();
 
