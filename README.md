@@ -5,7 +5,9 @@ Currently watchdog only supports guest executables and stateless services.
 
 ## How to use
 
-To allow Watchdog to start reporting the service healthcheck status, the service must first register a healthcheck with the Watchdog. To do so you must configure the healthcheck inside your servicemanifest.xml file
+To allow Watchdog to start reporting the service healthcheck status, the service must first register a healthcheck with the Watchdog. To do so you must configure the healthcheck inside your servicemanifest.xml file as an extension:
+
+Example:
 
 ```xml
   <ServiceTypes>
@@ -13,8 +15,8 @@ To allow Watchdog to start reporting the service healthcheck status, the service
       <Extensions>
         <Extension Name="Watchdog">
           <Watchdog xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
-            !-- The relative url for the healthcheck -->
-            <Healthcheck>/Healthcheck</Healthcheck>
+            !-- The relative url of your healthcheck -->
+            <Healthcheck>/api/healthcheck</Healthcheck>
           </Watchdog>
         </Extension>
       </Extensions>
