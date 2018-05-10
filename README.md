@@ -7,7 +7,7 @@ using HTTP healthchecks. The result of these healthchecks are then reported to t
 
 It's designed to be simple and easy to use.
 
-Currently watchdog only supports guest executables and stateless services.
+Currently Watchdog only supports guest executables and stateless services.
 
 ## How to use
 
