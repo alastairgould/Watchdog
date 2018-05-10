@@ -5,5 +5,12 @@ Currently watchdog only supports guest executables and stateless services.
 
 ## How to use
 
-To allow Watchdog to start reporting the service healthcheck status, the service must first register a healthcheck with the Watchdog. To do so you must configure the healthcheck inside your servicemanifest file.
+To allow Watchdog to start reporting the service healthcheck status, the service must first register a healthcheck with the Watchdog. To do so you must configure the healthcheck inside your servicemanifest.xml file
+
+```xml
+<Test>
+  <Test>
+  </Test>
+</Test>
+```
 
