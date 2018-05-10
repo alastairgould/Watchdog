@@ -1,4 +1,7 @@
 # Watchdog
+
+[![Build status](https://ci.appveyor.com/api/projects/status/4yquw4ajb2he1a52/branch/master?svg=true)](https://ci.appveyor.com/project/alastairgould/watchdog/branch/master)
+
 Watchdog is a service fabric application designed to monitor the health of services running on a service fabric cluster 
 using HTTP healthchecks. The result of these healthchecks are then reported to the service fabric health store.
 
