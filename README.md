@@ -14,7 +14,7 @@ An example of how to do this:
 
 ```xml
   <ServiceTypes>
-    <StatelessServiceType ServiceTypeName="HealthcheckType">
+    <StatelessServiceType ServiceTypeName="ServiceTypeName">
       <Extensions>
         <Extension Name="Watchdog">
           <Watchdog xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
