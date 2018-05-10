@@ -29,9 +29,8 @@ An example of how to do this:
 
 ## How it works 
 
-Watchdog queries service fabric and looks for all services which have a Watchdog configuration. For each service it finds, it identifies all service instances running for that service and hits the healthcheck endpoint. It then reports the result of the healthcheck for the service instance to the service fabric health store.
+Watchdog queries service fabric and looks for all services which have a Watchdog configuration. For each service it finds, it identifies all service instances running for that service and hits the healthcheck endpoint. It then reports the result of the healthcheck to the service fabric health store.
 
 Currently Watchdog is designed to be run as single instance application to avoid either multiple Watchdogs hitting the same 
-endpoints at similar times, or the added complexity of cordination between multiple processes. However there are plans to extend 
-the application to run using multiple instances by either making each instance responsible for every service instances on its own 
-node or by cordination between Watchdogs.
+endpoints at similar times, or the added complexity of coordination between multiple processes. There are plans to extend 
+the application to run  multiple instances by either making each instance of the Watchdog responsible for reporting health of service instances on its own node or by coordination between Watchdog processes(Reliable collections, actor model, etc).
