@@ -1,5 +1,6 @@
 # Watchdog
-Watchdog is an application which runs on service fabric. It is designed to call http healthchecks of services running on the cluster and then report the result of the healtchecks to the service fabric health store.
+Watchdog is an application designed to monitor the health of services running on a service fabric cluster 
+using HTTP healthchecks. The result of these healthchecks are then reported to the service fabric health store.
 
 Currently watchdog only supports guest executables and stateless services.
 
