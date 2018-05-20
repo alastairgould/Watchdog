@@ -63,8 +63,8 @@ namespace Watchdog
 
             builder.RegisterType<FindHealthcheckEndpointsQuery>().As<IFindHealthcheckEndpointsQuery>();
             builder.RegisterType<Healthcheck>();
-            builder.RegisterType<HealthcheckClient>();
-            builder.RegisterType<ReportHealth>();
+            builder.RegisterType<HealthcheckClient>().As<IHealthcheckClient>();
+            builder.RegisterType<ReportHealth>().As<IReportHealth>();
 
             var container = builder.Build();
             return container;
