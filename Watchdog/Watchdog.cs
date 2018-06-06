@@ -2,11 +2,10 @@
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
-using Autofac;
-using Autofac.Extras.Quartz;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Quartz;
 using Watchdog.Queries;
 
 namespace Watchdog
@@ -35,39 +34,16 @@ namespace Watchdog
         /// <param name="cancellationToken">Canceled when Service Fabric needs to shut down this service instance.</param>
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-            var container = ConfigureContainer();
-            var scheduler = container.Resolve<IScheduler>();
-
-            await ConfigureJob(cancellationToken, scheduler);
-
-            scheduler.Start(cancellationToken).Wait(cancellationToken);
-        }
-
-        private static async Task ConfigureJob(CancellationToken cancellationToken, IScheduler scheduler)
-        {
-            var job = JobBuilder.Create<HealthcheckScheduledJob>().Build();
-
-            var trigger = TriggerBuilder.Create()
-                .StartNow()
-                .WithSchedule(SimpleScheduleBuilder.RepeatSecondlyForever(10)).Build();
-
-            await scheduler.ScheduleJob(job, trigger, cancellationToken);
-        }
-
-        private static IContainer ConfigureContainer()
-        {
-            var builder = new ContainerBuilder();
-
-            builder.RegisterModule(new QuartzAutofacFactoryModule());
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(HealthcheckScheduledJob).Assembly));
-
-            builder.RegisterType<FindHealthcheckEndpointsQuery>().As<IFindHealthcheckEndpointsQuery>();
-            builder.RegisterType<Healthcheck>();
-            builder.RegisterType<HealthcheckClient>().As<IHealthcheckClient>();
-            builder.RegisterType<ReportHealth>().As<IReportHealth>();
-
-            var container = builder.Build();
-            return container;
+            await new HostBuilder()
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton<IReportHealth, ReportHealth>();
+                    services.AddSingleton<IFindHealthcheckEndpointsQuery, FindHealthcheckEndpointsQuery>();
+                    services.AddSingleton<IHealthcheckClient, HealthcheckClient>();
+                    services.AddHostedService<HealthcheckService>();
+                })
+                .Build()
+                .StartAsync(cancellationToken);
         }
     }
 }
